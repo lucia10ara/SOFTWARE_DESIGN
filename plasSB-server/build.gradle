@@ -1,0 +1,37 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.6'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'ecoembes'
+version = '1.0'
+
+repositories {
+	mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+dependencies {
+	// Spring Boot Starter Web for building web applications
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // ⬇️ ELIMINADA: La seguridad la gestiona el Servidor Central
+    // Starter Security (se necesita para la autenticación de los usuarios, para el StateManagement y manejar los tokens)
+    // implementation 'org.springframework.boot:spring-boot-starter-security'
+    
+	// SpringDoc OpenAPI UI Dependency this is needed to use Swagger annotations
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
+    
+    // TW2 - Persistencia de Capacidad
+    // Spring Boot Starter Data JPA para trabajar con JPA y Hibernate
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'	
+
+    // H2 Database para la base de datos en memoria
+    runtimeOnly 'com.h2database:h2'
+}
