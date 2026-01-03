@@ -1,10 +1,15 @@
 package client.proxies;
 
-import client.data.EmployeeDTO;
 import client.data.CredentialsDTO;
+import client.data.DumpsterDTO;
+
+import java.util.List;
 
 public interface IEcoembesServiceProxy {
-    // CAMBIO: Debe devolver EmployeeDTO, no String
-    String login(CredentialsDTO credentials); 
+    String login(CredentialsDTO credentials);
     void logout(String token);
+
+    // Persona B
+    DumpsterDTO createDumpster(DumpsterDTO dumpster, String token);
+    List<DumpsterDTO> listDumpsters(String token);
 }

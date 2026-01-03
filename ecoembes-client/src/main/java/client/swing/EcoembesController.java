@@ -1,22 +1,17 @@
 package client.swing;
 
-
 import client.proxies.*;
 import client.data.*;
 
 public class EcoembesController {
     private IEcoembesServiceProxy serviceProxy = new RestTemplateServiceProxy();
-    
-    // Cambiamos a String para aceptar el formato de Swagger
-    private String token = null; 
+    private String token = null;
 
     public boolean login(String email, String password) {
         try {
-            // El proxy ahora devuelve el String que envía el servidor
             String result = serviceProxy.login(new CredentialsDTO(email, password));
-            
             if (result != null && !result.isEmpty()) {
-                this.token = result; // Guardamos el token alfanumérico
+                this.token = result;
                 return true;
             }
         } catch (Exception e) {
@@ -27,12 +22,21 @@ public class EcoembesController {
 
     public void logout() {
         if (this.token != null) {
-            serviceProxy.logout(this.token); 
+            serviceProxy.logout(this.token);
             this.token = null;
         }
     }
 
     public String getToken() {
         return token;
+    }
+
+    // ---------------- Persona B ----------------
+    public DumpsterDTO createDumpster(DumpsterDTO dto) {
+        return serviceProxy.createDumpster(dto, this.token);
+    }
+
+    public java.util.List<DumpsterDTO> listDumpsters() {
+        return serviceProxy.listDumpsters(this.token);
     }
 }

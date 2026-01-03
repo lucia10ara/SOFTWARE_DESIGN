@@ -1,21 +1,30 @@
 package client.proxies;
 
-
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
 
-import client.data.EmployeeDTO;
 import client.data.CredentialsDTO;
+import client.data.DumpsterDTO;
 
-
+import java.util.Arrays;
+import java.util.List;
 
 public class RestTemplateServiceProxy implements IEcoembesServiceProxy {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String apiBaseUrl = "http://localhost:8080";
 
+    private HttpHeaders buildHeaders(String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        if (token != null && !token.isBlank()) {
+            headers.set("Authorization", "Bearer " + token);
+        }
+        return headers;
+    }
+
     @Override
     public String login(CredentialsDTO credentials) {
         try {
-            // Pedimos String.class porque el body de respuesta es "19ad59fb345"
             return restTemplate.postForObject(apiBaseUrl + "/auth/login", credentials, String.class);
         } catch (Exception e) {
             throw new RuntimeException("Error en el login: " + e.getMessage());
@@ -28,8 +37,35 @@ public class RestTemplateServiceProxy implements IEcoembesServiceProxy {
             String url = apiBaseUrl + "/auth/logout?token=" + token;
             restTemplate.postForObject(url, null, Void.class);
         } catch (Exception e) {
-
             System.out.println("Nota: El servidor no confirmó el logout (400), pero cerramos sesión local.");
+        }
+    }
+
+    // -----------------
+    // Persona B
+    // -----------------
+    @Override
+    public DumpsterDTO createDumpster(DumpsterDTO dumpster, String token) {
+        try {
+            String url = apiBaseUrl + "/dumpsters";
+            HttpEntity<DumpsterDTO> entity = new HttpEntity<>(dumpster, buildHeaders(token));
+            ResponseEntity<DumpsterDTO> response = restTemplate.exchange(url, HttpMethod.POST, entity, DumpsterDTO.class);
+            return response.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Error creando dumpster: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<DumpsterDTO> listDumpsters(String token) {
+        try {
+            String url = apiBaseUrl + "/dumpsters";
+            HttpEntity<Void> entity = new HttpEntity<>(buildHeaders(token));
+            ResponseEntity<DumpsterDTO[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, DumpsterDTO[].class);
+            DumpsterDTO[] arr = response.getBody();
+            return arr == null ? List.of() : Arrays.asList(arr);
+        } catch (Exception e) {
+            throw new RuntimeException("Error listando dumpsters: " + e.getMessage());
         }
     }
 }
