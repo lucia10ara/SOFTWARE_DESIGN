@@ -31,7 +31,7 @@ public class EcoembesController {
         return token;
     }
 
-    // ---------------- Persona B ----------------
+    // -----------------------------
     public DumpsterDTO createDumpster(DumpsterDTO dto) {
         return serviceProxy.createDumpster(dto, this.token);
     }
@@ -39,4 +39,18 @@ public class EcoembesController {
     public java.util.List<DumpsterDTO> listDumpsters() {
         return serviceProxy.listDumpsters(this.token);
     }
+    
+ // --------------------------------
+    public java.util.List<PlantDTO> listPlants() {
+        return serviceProxy.listPlants(this.token);  // GET /plants
+    }
+
+    public int getPlantCapacity(int rpId) {
+        return serviceProxy.getPlantCapacity(rpId, this.token); // GET /plants/{id}/capacity
+    }
+
+    public void assignDumpster(AssignDumpsterRequestDTO dto) {
+        serviceProxy.assignDumpster(dto, this.token); // PUT /assignments
+    }
+
 }

@@ -56,6 +56,20 @@ public class MainWindow extends JFrame {
 
         add(pnlContent, BorderLayout.CENTER);
 
+        
+        JButton btnAssign = new JButton("<html><center>🔄<br>Asignar Dumpster</center></html>");
+        btnAssign.setPreferredSize(new Dimension(220, 120));
+        btnAssign.setBackground(new Color(230, 245, 230));
+        btnAssign.setFont(new Font("SansSerif", Font.BOLD, 14));
+        btnAssign.setForeground(greenEco);
+
+        gbc.gridy = 1;
+        gbc.gridx = 0;
+        pnlContent.add(btnAssign, gbc);
+
+        btnAssign.addActionListener(e -> new AssignDumpsterWindow(controller).setVisible(true));
+
+        
         btnLogout.addActionListener(e -> {
             controller.logout();
             new LoginWindow(controller).setVisible(true);

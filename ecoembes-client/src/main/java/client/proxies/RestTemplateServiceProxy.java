@@ -3,8 +3,10 @@ package client.proxies;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 
+import client.data.AssignDumpsterRequestDTO;
 import client.data.CredentialsDTO;
 import client.data.DumpsterDTO;
+import client.data.PlantDTO;
 
 import java.util.Arrays;
 import java.util.List;
@@ -68,4 +70,43 @@ public class RestTemplateServiceProxy implements IEcoembesServiceProxy {
             throw new RuntimeException("Error listando dumpsters: " + e.getMessage());
         }
     }
+    
+	 // Plantas y Asignación:
+    
+	 @Override
+	 public List<PlantDTO> listPlants(String token) {
+	     try {
+	         String url = apiBaseUrl + "/plants";
+	         HttpEntity<Void> entity = new HttpEntity<>(buildHeaders(token));
+	         ResponseEntity<PlantDTO[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, PlantDTO[].class);
+	         PlantDTO[] arr = response.getBody();
+	         return arr == null ? List.of() : Arrays.asList(arr);
+	     } catch (Exception e) {
+	         throw new RuntimeException("Error listando plantas: " + e.getMessage());
+	     }
+	 }
+	
+	 @Override
+	 public int getPlantCapacity(int rpId, String token) {
+	     try {
+	         String url = apiBaseUrl + "/plants/" + rpId + "/capacity";
+	         HttpEntity<Void> entity = new HttpEntity<>(buildHeaders(token));
+	         ResponseEntity<Integer> response = restTemplate.exchange(url, HttpMethod.GET, entity, Integer.class);
+	         return response.getBody() != null ? response.getBody() : 0;
+	     } catch (Exception e) {
+	         throw new RuntimeException("Error obteniendo capacidad de planta: " + e.getMessage());
+	     }
+	 }
+	
+	 @Override
+	 public void assignDumpster(AssignDumpsterRequestDTO dto, String token) {
+	     try {
+	         String url = apiBaseUrl + "/assignments";
+	         HttpEntity<AssignDumpsterRequestDTO> entity = new HttpEntity<>(dto, buildHeaders(token));
+	         restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
+	     } catch (Exception e) {
+	         throw new RuntimeException("Error asignando dumpster: " + e.getMessage());
+	     }
+	 }
+
 }
